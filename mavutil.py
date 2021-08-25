@@ -1992,7 +1992,7 @@ mode_mapping_sub = {
 }
 
 mode_mapping_blimp = {
-    0 : 'LAND',
+    0 : 'HOLD',
     1 : 'MANUAL',
     2 : 'VELOCITY',
     3 : 'LOITER',
