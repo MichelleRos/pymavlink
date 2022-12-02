@@ -1,11 +1,17 @@
 /ASLUAV.py
 /ASLUAV.xml
+/AVSSUAS.py
+/AVSSUAS.xml
+/all.py
+/all.xml
 /ardupilotmega.py
 /ardupilotmega.xml
 /autoquad.py
 /autoquad.xml
 /common.py
 /common.xml
+/development.py
+/development.xml
 /icarous.py
 /icarous.xml
 /matrixpilot.py
@@ -20,6 +26,8 @@
 /slugs.xml
 /standard.py
 /standard.xml
+/storm32.py
+/storm32.xml
 /test.py
 /test.xml
 /uAvionix.py
