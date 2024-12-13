@@ -575,6 +575,50 @@ def distance_two(MSG1, MSG2, horizontal=True):
     except Exception as ex:
         print(ex)
         return None
+    
+LATLON_TO_M = 111318.84502145034
+
+def _lonscl(lat):
+    scale = cos(radians(lat))
+    return max(scale, 0.01)
+
+ekf_origin = None
+
+def _lat_lon_to_m(MSG1):
+    #adapted from Location -> Location.cpp's get_vector_xy_from_origin_NE() function.
+    global ekf_origin
+    if ekf_origin is None:
+        from . import mavutil
+        self = mavutil.mavfile_global
+        if not 'ORGN' in self.messages:
+            return None
+        ekf_origin = self.messages['ORGN']
+    lato = ekf_origin.Lat
+    lono = ekf_origin.Lng
+    alto = ekf_origin.Alt
+
+    (lat, lon, alt) = get_lat_lon_alt(MSG1)
+    lat = degrees(lat)
+    lon = degrees(lon)
+    # alt = alt
+
+    x = (lat-lato) * LATLON_TO_M
+    y = (lon-lono) * LATLON_TO_M * _lonscl((lat+lato)/2.0)
+    z = alto - alt
+
+    return x, y, z
+
+def lat_to_n(MSG1):
+    (x,y,z) = _lat_lon_to_m(MSG1)
+    return x
+
+def lon_to_e(MSG1):
+    (x,y,z) = _lat_lon_to_m(MSG1)
+    return y
+
+def alt_to_d(MSG1):
+    (x,y,z) = _lat_lon_to_m(MSG1)
+    return z
 
 first_fix = None
 
@@ -1082,8 +1126,6 @@ def gps_offset(lat, lon, east, north):
   bearing = math.degrees(math.atan2(east, north))
   distance = math.sqrt(east**2 + north**2)
   return gps_newpos(lat, lon, bearing, distance)
-
-ekf_origin = None
 
 def ekf1_pos(EKF1):
   '''calculate EKF position when EKF disabled'''
