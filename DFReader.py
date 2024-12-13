@@ -164,7 +164,10 @@ class DFFormat(object):
         for i in range(len(self.units)):
             # If the format has its own multiplier, do not adjust the unit,
             # and if no unit is specified there is nothing to adjust
-            if self.msg_mults[i] is not None or self.units[i] == "":
+            try:
+                if self.msg_mults[i] is not None or self.units[i] == "":
+                    continue
+            except:
                 continue
             # Get the unit multiplier from the lookup table
             if mult_ids[i] in mult_lookup:
@@ -1169,6 +1172,7 @@ class DFReader_binary(DFReader):
         lengths = [-1] * 256
         data_len = self.data_len
         data_map = self.data_map
+        bad_hdrs = 0
 
         while ofs+3 < data_len:
             h1, h2, mtype = data_map[ofs:ofs+3]
@@ -1177,7 +1181,9 @@ class DFReader_binary(DFReader):
                 # but it needs to be at least 249 bytes which is the block based logging page size (256) less a 6 byte header and
                 # one byte of data. Block based logs are sized in pages which means they can have up to 249 bytes of trailing space.
                 if data_len - ofs >= 528 or data_len < 528:
-                    print("bad header 0x%02x 0x%02x at %d" % (h1, h2, ofs), file=sys.stderr)
+                    bad_hdrs += 1
+                    if (bad_hdrs < 100 or (bad_hdrs < 10000 and bad_hdrs % 100 == 0) or (bad_hdrs < 1000000 and bad_hdrs % 10000 == 0) or (bad_hdrs >= 1000000 and bad_hdrs % 1000000 == 0)):
+                        print("bad header 0x%02x 0x%02x at %d Total bad headers %d" % (h1, h2, ofs, bad_hdrs), file=sys.stderr)
                 ofs += 1
                 continue
             offsets[mtype].append(ofs)
