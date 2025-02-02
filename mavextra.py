@@ -937,6 +937,18 @@ def wrap_360(angle):
         angle += 360.0
     return angle
 
+def min(val1,val2):
+    if val1 < val2:
+        return val1
+    else:
+        return val2
+    
+def max(val1,val2):
+    if val1 > val2:
+        return val1
+    else:
+        return val2
+
 class DCM_State(object):
     '''DCM state object'''
     def __init__(self, roll, pitch, yaw):
