@@ -1132,6 +1132,7 @@ class DFReader_binary(DFReader):
         if use_fast_indexer and dfindexer.available:
             self.init_arrays_fast(progress_callback=progress_callback)
         else:
+            print("Using legacy indexer.")
             self.init_arrays(progress_callback=progress_callback)
         self.init_clock()
         self.prev_type = None
